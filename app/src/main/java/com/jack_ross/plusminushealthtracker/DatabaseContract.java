@@ -1,8 +1,5 @@
 package com.jack_ross.plusminushealthtracker;
 
-import android.provider.BaseColumns;
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -21,12 +18,14 @@ public final class DatabaseContract {
     public DatabaseContract() {
     }
 
-        public static abstract class TableDefinitions {
+    public static abstract class TableDefinitions {
 
         /**
          * A list of all of the column definitions for this table
          */
         public ArrayList<ColumnDefinition> columns = new ArrayList<ColumnDefinition>();
+
+        /* @TODO Need a function for getting all of the column names */
 
         /**
          * Classes must implement a declaration of the columns that are used. Should set the

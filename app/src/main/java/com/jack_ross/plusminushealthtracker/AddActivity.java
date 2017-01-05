@@ -2,6 +2,7 @@ package com.jack_ross.plusminushealthtracker;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -36,15 +37,33 @@ public class AddActivity extends AppCompatActivity {
         long rowId;
         rowId = database.insert("activities", null, values);
 
-        /*
-        Cursor cursor = database.query(
-
-        );*/
-
         Intent intent = new Intent(this, DisplayMessageActivity.class);
         EditText editText = (EditText) findViewById(R.id.edit_message);
         String message = "Row ID: " + rowId;
         intent.putExtra(EXTRA_MESSAGE, message);
+
+        Cursor cursor = database.query(
+                "activities",
+                new String[]{
+                    "dateTime",
+                    "userId",
+                    "description",
+                    "weight"
+                },
+                "userId = ?",
+                new String[]{"1"},
+                null,
+                null,
+                "dateTime DESC"
+        );
+
+        String activities = "";
+        while(cursor.moveToNext()) {
+            activities += "Item: " + cursor.getString(cursor.getColumnIndexOrThrow("description")) + "\n";
+        }
+
+        intent.putExtra(EXTRA_MESSAGE, activities);
+
         startActivity(intent);
     }
 }

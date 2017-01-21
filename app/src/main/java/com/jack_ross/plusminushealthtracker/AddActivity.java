@@ -9,6 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+
 public class AddActivity extends AppCompatActivity {
 
     public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
@@ -29,7 +33,12 @@ public class AddActivity extends AppCompatActivity {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("dateTime", "2016-11-01 20:50:05");
+
+        Long tsLong = System.currentTimeMillis() / 1000;
+        values.put(
+                "dateTime",
+                tsLong.toString()
+        );
         values.put("userId", 1);
         values.put("description", "Testing to see if this works");
         values.put("weight", -2);
@@ -45,10 +54,10 @@ public class AddActivity extends AppCompatActivity {
         Cursor cursor = database.query(
                 "activities",
                 new String[]{
-                    "dateTime",
-                    "userId",
-                    "description",
-                    "weight"
+                        "dateTime",
+                        "userId",
+                        "description",
+                        "weight"
                 },
                 "userId = ?",
                 new String[]{"1"},
@@ -58,12 +67,21 @@ public class AddActivity extends AppCompatActivity {
         );
 
         String activities = "";
-        while(cursor.moveToNext()) {
-            activities += "Item: " + cursor.getString(cursor.getColumnIndexOrThrow("description")) + "\n";
+        while (cursor.moveToNext()) {
+            String date = this.convertTimestamp(cursor.getString(cursor.getColumnIndexOrThrow("dateTime")));
+            activities +=  date + ": ";
+            activities += cursor.getString(cursor.getColumnIndexOrThrow("weight")) + " ";
+            activities += cursor.getString(cursor.getColumnIndexOrThrow("description")) + "\n";
         }
 
         intent.putExtra(EXTRA_MESSAGE, activities);
 
         startActivity(intent);
+    }
+
+    protected String convertTimestamp(String timeStamp) {
+        Date date = new Date(Integer.parseInt(timeStamp) * 1000);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy 'at' h:mm a");
+        return dateFormat.format(date);
     }
 }

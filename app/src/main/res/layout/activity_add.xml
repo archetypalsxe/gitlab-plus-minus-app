@@ -25,7 +25,7 @@
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="42dp"
-        android:id="@+id/radioGroup">
+        android:id="@+id/activityWeight">
 
         <RadioButton
             android:layout_width="54dp"
@@ -74,7 +74,7 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/activityDescription"
-        android:layout_below="@+id/radioGroup"
+        android:layout_below="@+id/activityWeight"
         android:layout_marginTop="26dp"
         android:hint="Please enter description of activity"
         android:layout_alignParentRight="true"

@@ -1,3 +1,4 @@
-Remove unnecessary fields on opening screen
+TODO's - Centralizing code
 Make activities in a more readable format
     Work on display
+Caching system for not having to go to the database everytime displaying

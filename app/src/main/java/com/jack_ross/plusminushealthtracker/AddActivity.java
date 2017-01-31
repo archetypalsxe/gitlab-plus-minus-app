@@ -32,6 +32,8 @@ public class AddActivity extends AppCompatActivity {
      * @param view View
      */
     public void saveActivity(View view) {
+        // @TODO Combine into centralized place
+
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase database = dbHelper.getReadableDatabase();
 
@@ -50,9 +52,6 @@ public class AddActivity extends AppCompatActivity {
         rowId = database.insert("activities", null, values);
 
         Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.edit_message);
-        String message = "Row ID: " + rowId;
-        intent.putExtra(EXTRA_MESSAGE, message);
 
         Cursor cursor = database.query(
                 "activities",
@@ -94,6 +93,7 @@ public class AddActivity extends AppCompatActivity {
     /**
      * Converts a provided timestamp into a display for users
      *
+     * @TODO Centralize
      * @param timeStamp String
      * @return String
      */
@@ -128,6 +128,7 @@ public class AddActivity extends AppCompatActivity {
     /**
      * Gets a unix timestamp of the start of the current day
      *
+     * @TODO Centralize
      * @param dayDifference int
      * @param startOfDay boolean
      * @return String
@@ -157,6 +158,7 @@ public class AddActivity extends AppCompatActivity {
     /**
      * Returns the activity total from yesterday
      *
+     * @TODO Centralize
      * @param daysDifference int
      * @param database Database
      * @return String

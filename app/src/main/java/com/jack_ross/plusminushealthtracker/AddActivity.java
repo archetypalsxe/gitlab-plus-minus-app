@@ -48,6 +48,8 @@ public class AddActivity extends AppCompatActivity {
         values.put("description", this.getDescription());
         values.put("weight", this.getWeight());
 
+        this.clearFields();
+
         long rowId;
         rowId = database.insert("activities", null, values);
 
@@ -81,10 +83,10 @@ public class AddActivity extends AppCompatActivity {
             activities += cursor.getString(cursor.getColumnIndexOrThrow("description")) + "<br/>";
         }
 
-        activities = "<b>Daily Total: "+ String.valueOf(total) +"</b><br/>"+ activities;
-        activities += "<b>Yesterday's Total: "+ this.getDaysTotal(-1, database);
-        activities += "<br/>Two Days Ago's Total: "+ this.getDaysTotal(-2, database);
-        activities += "<br/>Three Days Ago's Total: "+ this.getDaysTotal(-3, database) +"</b>";
+        activities = "<b>Daily Total: " + String.valueOf(total) + "</b><br/>" + activities;
+        activities += "<b>Yesterday's Total: " + this.getDaysTotal(-1, database);
+        activities += "<br/>Two Days Ago's Total: " + this.getDaysTotal(-2, database);
+        activities += "<br/>Three Days Ago's Total: " + this.getDaysTotal(-3, database) + "</b>";
         intent.putExtra(EXTRA_MESSAGE, activities);
 
         startActivity(intent);
@@ -93,9 +95,9 @@ public class AddActivity extends AppCompatActivity {
     /**
      * Converts a provided timestamp into a display for users
      *
-     * @TODO Centralize
      * @param timeStamp String
      * @return String
+     * @TODO Centralize
      */
     protected String convertTimestamp(String timeStamp) {
         Date date = new Date(Integer.parseInt(timeStamp) * 1000L);
@@ -119,10 +121,34 @@ public class AddActivity extends AppCompatActivity {
      * @return int
      */
     protected int getWeight() {
-        RadioGroup radioGroup = (RadioGroup)findViewById(R.id.activityWeight);
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.activityWeight);
         int radioId = radioGroup.getCheckedRadioButtonId();
         RadioButton selectedButton = (RadioButton) findViewById(radioId);
         return Integer.parseInt(selectedButton.getText().toString());
+    }
+
+    /**
+     * Clears just the description that the user has entered
+     */
+    protected void clearDescription() {
+        EditText editText = (EditText) findViewById(R.id.activityDescription);
+        editText.setText("");
+    }
+
+    /**
+     * Clear the weight that the user has entered
+     */
+    protected void clearWeight() {
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.activityWeight);
+        radioGroup.clearCheck();
+    }
+
+    /**
+     * Clear the form fields so that if the user hits the back key, they are not pre-filled in
+     */
+    protected void clearFields() {
+        this.clearDescription();
+        this.clearWeight();
     }
 
     /**

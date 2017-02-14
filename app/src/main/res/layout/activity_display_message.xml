@@ -18,10 +18,19 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:id="@+id/textView3"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:scrollbars="horizontal|vertical"
         android:scrollbarAlwaysDrawHorizontalTrack="true"
-        android:scrollbarAlwaysDrawVerticalTrack="true" />
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:layout_above="@+id/homeButton" />
+
+    <Button
+        android:text="Home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="goHome"
+        android:id="@+id/homeButton" />
 </RelativeLayout>

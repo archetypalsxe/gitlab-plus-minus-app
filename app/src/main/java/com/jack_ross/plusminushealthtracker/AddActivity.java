@@ -32,6 +32,9 @@ public class AddActivity extends AppCompatActivity {
      * @param view View
      */
     public void saveActivity(View view) {
+        NotificationSender notificationSender =
+            new NotificationSender();
+        notificationSender.onReceive(getApplicationContext(), new Intent());
         // @TODO Combine into centralized place
 
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());

@@ -22,7 +22,8 @@ public class NotificationSender extends BroadcastReceiver {
         NotificationCompat.Builder n = new NotificationCompat.Builder(context)
             .setContentTitle("Activity Saved")
             .setContentText("Your activity was successfully saved!")
-            .setSmallIcon(R.mipmap.ic_launcher)
+            //.setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
                 /*
             .setContentIntent(pIntent)
             .setAutoCancel(true)

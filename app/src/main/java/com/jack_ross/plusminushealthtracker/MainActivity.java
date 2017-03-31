@@ -1,5 +1,6 @@
 package com.jack_ross.plusminushealthtracker;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,8 +17,14 @@ public class MainActivity extends AppCompatActivity {
 
     public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
 
+    private NotificationSender alarm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Context context = this.getApplicationContext();
+        this.alarm = new NotificationSender();
+        this.alarm.setRepeatingAlarm(context);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }

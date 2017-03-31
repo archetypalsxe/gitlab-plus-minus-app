@@ -1,7 +1,6 @@
 package com.jack_ross.plusminushealthtracker;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,7 +26,6 @@ public class AddActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
-        alarm = new NotificationSender();
     }
 
     /**
@@ -37,35 +35,6 @@ public class AddActivity extends AppCompatActivity {
      */
     public void saveActivity(View view) {
 
-        // May actually be working even if the app is closed
-        Context context = this.getApplicationContext();
-        if(alarm != null) {
-            alarm.setAlarm(context);
-        }
-
-
-        // This sends a notification in 15 seconds, but doesn't work if app closed
-        /*
-        NotificationSender notificationSender = new NotificationSender();
-        registerReceiver(notificationSender, new IntentFilter("TestingThis") );
-        PendingIntent pi = PendingIntent.getBroadcast(this, 0, new Intent("TestingThis"), 0);
-
-        AlarmManager am = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE));
-        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000 * 8, pi);
-        /*
-        am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
-                15 * 1000, pi );
-                */
-
-
-
-
-        // This sends a notification immediately
-        /*
-        NotificationSender notificationSender =
-            new NotificationSender();
-        notificationSender.onReceive(getApplicationContext(), new Intent());
-        */
         // @TODO Combine into centralized place
 
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jack_ross.plusminushealthtracker">
-
-    <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
-    <receiver android:process=":remote" android:name=".Alarm"></receiver>
-
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -20,6 +17,8 @@
         </activity>
         <activity android:name=".DisplayMessageActivity" />
         <activity android:name=".AddActivity" />
+        <receiver android:name=".NotificationSender"></receiver>
+
     </application>
 
 </manifest>

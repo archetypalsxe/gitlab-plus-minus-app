@@ -1,15 +1,11 @@
 package com.jack_ross.plusminushealthtracker;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -23,12 +19,15 @@ import java.util.Date;
 
 public class AddActivity extends AppCompatActivity {
 
+    private NotificationSender alarm;
+
     public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
+        alarm = new NotificationSender();
     }
 
     /**
@@ -38,15 +37,30 @@ public class AddActivity extends AppCompatActivity {
      */
     public void saveActivity(View view) {
 
+        // May actually be working even if the app is closed
+        Context context = this.getApplicationContext();
+        if(alarm != null) {
+            alarm.setAlarm(context);
+        }
+
+
+        // This sends a notification in 15 seconds, but doesn't work if app closed
+        /*
         NotificationSender notificationSender = new NotificationSender();
         registerReceiver(notificationSender, new IntentFilter("TestingThis") );
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, new Intent("TestingThis"), 0);
+
         AlarmManager am = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE));
+        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000 * 8, pi);
+        /*
         am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
                 15 * 1000, pi );
+                */
 
 
 
+
+        // This sends a notification immediately
         /*
         NotificationSender notificationSender =
             new NotificationSender();

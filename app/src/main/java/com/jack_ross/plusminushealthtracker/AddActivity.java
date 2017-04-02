@@ -1,6 +1,7 @@
 package com.jack_ross.plusminushealthtracker;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -34,6 +35,9 @@ public class AddActivity extends AppCompatActivity {
      * @param view View
      */
     public void saveActivity(View view) {
+        Context context = this.getApplicationContext();
+        alarm = new NotificationSender();
+        alarm.setRepeatingAlarm(context);
 
         // @TODO Combine into centralized place
 

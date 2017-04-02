@@ -1,13 +1,16 @@
 package com.jack_ross.plusminushealthtracker;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
+
 import java.util.Calendar;
 
 /**
@@ -27,18 +30,27 @@ public class NotificationSender extends BroadcastReceiver {
         //Acquire the lock
         wl.acquire();
 
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            new Intent(context, MainActivity.class),
+            0
+        );
 
+        PendingIntent otherIntent = PendingIntent.getActivity(
+            context, 0, new Intent(context, AddActivity.class), 0
+        );
+
+        long[] vibrate = {500,1000};
         NotificationCompat.Builder n = new NotificationCompat.Builder(context)
             .setContentTitle("Friendly Reminder")
             .setContentText("Don't forget to log your activities!")
-            //.setSmallIcon(R.mipmap.ic_launcher)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
-                /*
-            .setContentIntent(pIntent)
+            .setContentIntent(pendingIntent)
+            .setVibrate(vibrate)
+            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            .addAction(android.R.drawable.ic_dialog_alert, "Add Activity", otherIntent)
             .setAutoCancel(true)
-            .addAction(R.drawable.icon, "Call", pIntent)
-            .addAction(R.drawable.icon, "More", pIntent)
-            .addAction(R.drawable.icon, "And more", pIntent).build()*/
             ;
 
         n.build();
@@ -49,7 +61,9 @@ public class NotificationSender extends BroadcastReceiver {
 
         this.setRepeatingAlarm(context);
 
-        notificationManager.notify(1, n.build());
+        Notification notification = n.build();
+        notificationManager.notify(1, notification);
+
         wl.release();
     }
 
@@ -59,7 +73,7 @@ public class NotificationSender extends BroadcastReceiver {
      * @param context
      */
     public void cancelAlarm(Context context) {
-        Intent intent = new Intent(context, NotificationSender.class);
+        Intent intent = new Intent(context, MainActivity.class);
         PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(sender);
@@ -73,11 +87,12 @@ public class NotificationSender extends BroadcastReceiver {
     public void setRepeatingAlarm(Context context) {
         this.cancelAlarm(context);
         AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, NotificationSender.class);
+        Intent intent = new Intent(context, MainActivity.class);
         intent.putExtra("onetime", Boolean.FALSE);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
         // Every 3 hours
         long interval = 1000 * 60 * 60 * 3;
+//long interval = 1000 * 30;
         Calendar cutOff = Calendar.getInstance();
         cutOff.set(Calendar.HOUR_OF_DAY, 18);
         cutOff.set(Calendar.MINUTE, 0);

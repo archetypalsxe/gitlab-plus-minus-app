@@ -30,6 +30,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         DatabaseContract.TableDefinitions activityTable = new Activities();
         String createSql = activityTable.getCreateTable();
         database.execSQL(createSql);
+
+        DatabaseContract.TableDefinitions userWeights = new UserWeights();
+        createSql = userWeights.getCreateTable();
+        database.execSQL(createSql);
     }
 
     /**
@@ -40,6 +44,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param newVersion
      */
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+        database.execSQL("DROP TABLE IF EXISTS activities");
+        database.execSQL("DROP TABLE IF EXISTS userWeights");
+        this.onCreate(database);
     }
 
     /**

@@ -17,6 +17,7 @@
         </activity>
         <activity android:name=".DisplayMessageActivity" />
         <activity android:name=".AddActivity" />
+        <activity android:name=".AddWeight" />
         <receiver android:name=".NotificationSender"></receiver>
 
     </application>

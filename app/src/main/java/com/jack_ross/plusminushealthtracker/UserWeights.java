@@ -5,13 +5,11 @@ import android.provider.BaseColumns;
 import java.util.Iterator;
 
 /**
- * Contract for the database table Activities
- *
- * @TODO Clean up with garbage. Move into namespacing and whatnot
+ * Contract for the database table for storing users' weights
  */
-public class Activities extends DatabaseContract.TableDefinitions implements BaseColumns {
+public class UserWeights extends DatabaseContract.TableDefinitions implements BaseColumns {
 
-    public static final String TABLE_NAME = "activities";
+    public static final String TABLE_NAME = "userWeights";
 
     /**
      * Set all of the columns in the instance variable columns
@@ -19,8 +17,7 @@ public class Activities extends DatabaseContract.TableDefinitions implements Bas
     protected void declareColumns() {
         this.columns.add(new ColumnDefinition("dateTime", "TEXT"));
         this.columns.add(new ColumnDefinition("userId", "INTEGER"));
-        this.columns.add(new ColumnDefinition("description", "TEXT"));
-        this.columns.add(new ColumnDefinition("weight", "INTEGER"));
+        this.columns.add(new ColumnDefinition("weight", "FLOAT"));
         for(Iterator<ColumnDefinition> i = this.columns.iterator(); i.hasNext(); ) {
             ColumnDefinition column = i.next();
         }
@@ -38,5 +35,4 @@ public class Activities extends DatabaseContract.TableDefinitions implements Bas
     protected String getId() {
         return _ID;
     }
-
 }

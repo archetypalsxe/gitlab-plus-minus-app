@@ -40,6 +40,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Called when we want to show the screen for adding a weight to the database
+     *
+     * @param view View
+     */
+    public void showAddWeight(View view) {
+        Intent intent = new Intent(this, AddWeight.class);
+        startActivity(intent);
+    }
+
+    /**
      * Show the screen for displaying activities
      *
      * @param view View

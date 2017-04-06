@@ -37,7 +37,7 @@ public class NotificationSender extends BroadcastReceiver {
             0
         );
 
-        PendingIntent otherIntent = PendingIntent.getActivity(
+        PendingIntent addActivityIntent = PendingIntent.getActivity(
             context, 0, new Intent(context, AddActivity.class), 0
         );
 
@@ -49,7 +49,7 @@ public class NotificationSender extends BroadcastReceiver {
             .setContentIntent(pendingIntent)
             .setVibrate(vibrate)
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            .addAction(android.R.drawable.ic_dialog_alert, "Add Activity", otherIntent)
+            .addAction(android.R.drawable.ic_dialog_alert, "Add Activity", addActivityIntent)
             .setAutoCancel(true)
             ;
 
@@ -59,7 +59,7 @@ public class NotificationSender extends BroadcastReceiver {
         NotificationManager notificationManager =
             (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        this.setRepeatingAlarm(context);
+        this.setAlarm(context);
 
         Notification notification = n.build();
         notificationManager.notify(1, notification);
@@ -73,8 +73,13 @@ public class NotificationSender extends BroadcastReceiver {
      * @param context
      */
     public void cancelAlarm(Context context) {
-        Intent intent = new Intent(context, MainActivity.class);
-        PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
+        Intent intent = new Intent(context, NotificationSender.class);
+        PendingIntent sender = PendingIntent.getBroadcast(
+            context,
+            561,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        );
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(sender);
     }
@@ -84,15 +89,23 @@ public class NotificationSender extends BroadcastReceiver {
      *
      * @param context
      */
-    public void setRepeatingAlarm(Context context) {
+    public void setAlarm(Context context) {
         this.cancelAlarm(context);
         AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, MainActivity.class);
+        Intent intent = new Intent(context, NotificationSender.class);
         intent.putExtra("onetime", Boolean.FALSE);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
+        PendingIntent pi = PendingIntent.getBroadcast(
+            context,
+            561,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        );
         // Every 3 hours
         long interval = 1000 * 60 * 60 * 3;
-//long interval = 1000 * 30;
+
+        // Every 30 seconds for debugging
+        //long interval = 1000 * 30;
+
         Calendar cutOff = Calendar.getInstance();
         cutOff.set(Calendar.HOUR_OF_DAY, 18);
         cutOff.set(Calendar.MINUTE, 0);
@@ -109,11 +122,19 @@ public class NotificationSender extends BroadcastReceiver {
             startTime = startDate.getTimeInMillis();
         }
 
+        am.set(
+            AlarmManager.RTC_WAKEUP,
+            startTime,
+            pi
+        );
+
+        /*
         am.setRepeating(
             AlarmManager.RTC_WAKEUP,
             startTime,
             interval,
             pi
         );
+        */
     }
 }

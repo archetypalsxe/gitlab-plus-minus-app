@@ -1,8 +1,6 @@
 package com.jack_ross.plusminushealthtracker;
 
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +8,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import java.util.Calendar;
 
@@ -53,16 +52,12 @@ public class NotificationSender extends BroadcastReceiver {
             .setAutoCancel(true)
             ;
 
-        n.build();
-
-
-        NotificationManager notificationManager =
-            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManagerCompat notificationManager =
+            NotificationManagerCompat.from(context);
 
         this.setAlarm(context);
 
-        Notification notification = n.build();
-        notificationManager.notify(1, notification);
+        notificationManager.notify(1, n.build());
 
         wl.release();
     }
@@ -76,7 +71,7 @@ public class NotificationSender extends BroadcastReceiver {
         Intent intent = new Intent(context, NotificationSender.class);
         PendingIntent sender = PendingIntent.getBroadcast(
             context,
-            561,
+            1,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT
         );
@@ -96,15 +91,12 @@ public class NotificationSender extends BroadcastReceiver {
         intent.putExtra("onetime", Boolean.FALSE);
         PendingIntent pi = PendingIntent.getBroadcast(
             context,
-            561,
+            1,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT
         );
         // Every 3 hours
         long interval = 1000 * 60 * 60 * 3;
-
-        // Every 30 seconds for debugging
-        //long interval = 1000 * 30;
 
         Calendar cutOff = Calendar.getInstance();
         cutOff.set(Calendar.HOUR_OF_DAY, 18);
@@ -121,6 +113,9 @@ public class NotificationSender extends BroadcastReceiver {
             startDate.add(Calendar.DAY_OF_MONTH, 1);
             startTime = startDate.getTimeInMillis();
         }
+
+        // 30 seconds for debugging
+        //startTime = System.currentTimeMillis() + (1000 * 30);
 
         am.set(
             AlarmManager.RTC_WAKEUP,

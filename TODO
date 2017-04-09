@@ -1,11 +1,15 @@
-Start Recording Weight
-    Actually save weights in the database
+Reminders to save weight
+Display weight
+Error validation on both fields
+    Error messages
 Reminders
     Make notification look better
     Ability to set frequency
     Ability to set hours
 Add ability to expand previous days
 Add ability to show more days worth of data
+Correlation between activities and weight
+    Displayed on add activity page
 TODO's - Centralizing code
 Make activities in a more readable format
     Work on display

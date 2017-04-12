@@ -57,8 +57,7 @@ public class AddActivity extends AppCompatActivity {
 
         this.clearFields();
 
-        long rowId;
-        rowId = database.insert("activities", null, values);
+        database.insert("activities", null, values);
 
         Intent intent = new Intent(this, DisplayMessageActivity.class);
 

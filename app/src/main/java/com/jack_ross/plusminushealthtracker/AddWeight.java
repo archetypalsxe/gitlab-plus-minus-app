@@ -1,6 +1,7 @@
 package com.jack_ross.plusminushealthtracker;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -41,14 +42,33 @@ public class AddWeight extends AppCompatActivity {
         database.insert("userWeights", null, values);
 
         Intent intent = new Intent(this, DisplayMessageActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, this.getWeightsDisplay(getApplicationContext()));
+        startActivity(intent);
+    }
 
+    /**
+     * Build an intent object for displaying weights
+     * @param context
+     * @return String
+     */
+    public String getWeightsDisplay (Context context) {
+        SQLiteDatabase database = this.getDatabase(context);
         String activities = "<b>Daily Average: " + this.getDaysAverage(0, database);
         activities += "<br>Yesterday's Average: " + this.getDaysAverage(-1, database);
         activities += "<br/>Two Days Ago's Average: " + this.getDaysAverage(-2, database);
         activities += "<br/>Three Days Ago's Average: " + this.getDaysAverage(-3, database) + "</b>";
-        intent.putExtra(EXTRA_MESSAGE, activities);
+        return activities;
+    }
 
-        startActivity(intent);
+    /**
+     * Get a readable database
+     *
+     * @param context
+     * @return SQLiteDatabase
+     */
+    protected SQLiteDatabase getDatabase(Context context) {
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
+        return dbHelper.getReadableDatabase();
     }
 
     @Override

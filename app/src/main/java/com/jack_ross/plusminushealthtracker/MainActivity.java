@@ -99,6 +99,18 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
+    /**
+     * Show the screen for displaying weights
+     * @param view View
+     */
+    public void showWeights(View view) {
+        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        AddWeight weightController = new AddWeight();
+        intent.putExtra(EXTRA_MESSAGE, weightController.getWeightsDisplay(getApplicationContext()));
+        startActivity(intent);
+    }
+
     /**
      * Gets a unix timestamp of the start of the current day
      *

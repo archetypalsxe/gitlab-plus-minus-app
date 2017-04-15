@@ -23,7 +23,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Context context = this.getApplicationContext();
         this.alarm = new NotificationSender();
-        this.alarm.setAlarm(context);
+        this.alarm.setAlarm(context, NotificationSender.ACTIVITY);
+        this.alarm.setAlarm(context, NotificationSender.WEIGHTS);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

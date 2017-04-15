@@ -25,6 +25,10 @@ public class AddWeight extends AppCompatActivity {
      * @param view
      */
     public void saveWeight(View view) {
+        Context context = this.getApplicationContext();
+        NotificationSender alarm = new NotificationSender();
+        alarm.setAlarm(context, NotificationSender.WEIGHTS);
+
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase database = dbHelper.getReadableDatabase();
 

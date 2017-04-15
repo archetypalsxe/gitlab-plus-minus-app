@@ -37,7 +37,7 @@ public class AddActivity extends AppCompatActivity {
     public void saveActivity(View view) {
         Context context = this.getApplicationContext();
         alarm = new NotificationSender();
-        alarm.setAlarm(context);
+        alarm.setAlarm(context, NotificationSender.ACTIVITY);
 
         // @TODO Combine into centralized place
 

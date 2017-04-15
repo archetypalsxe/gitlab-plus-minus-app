@@ -1,6 +1,7 @@
 package com.jack_ross.plusminushealthtracker;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,6 +18,9 @@ import java.util.Calendar;
  */
 public class NotificationSender extends BroadcastReceiver {
 
+    public static final int ACTIVITY = 1;
+    public static final int WEIGHTS = 2;
+
     /**
      * Called when receiving an intent broadcast
      *
@@ -29,36 +33,12 @@ public class NotificationSender extends BroadcastReceiver {
         //Acquire the lock
         wl.acquire();
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-            context,
-            0,
-            new Intent(context, MainActivity.class),
-            0
-        );
-
-        PendingIntent addActivityIntent = PendingIntent.getActivity(
-            context, 0, new Intent(context, AddActivity.class), 0
-        );
-
-        long[] vibrate = {500,1000};
-        NotificationCompat.Builder n = new NotificationCompat.Builder(context)
-            .setContentTitle("Friendly Reminder")
-            .setContentText("Don't forget to log your activities!")
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentIntent(pendingIntent)
-            .setVibrate(vibrate)
-            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            .addAction(android.R.drawable.ic_dialog_alert, "Add Activity", addActivityIntent)
-            .setAutoCancel(true)
-            ;
-
         NotificationManagerCompat notificationManager =
-            NotificationManagerCompat.from(context);
+                NotificationManagerCompat.from(context);
+        int type = intent.getExtras().getInt("type");
+        notificationManager.notify(1, this.getNotification(context, type));
 
-        this.setAlarm(context);
-
-        notificationManager.notify(1, n.build());
-
+        this.setAlarm(context, type);
         wl.release();
     }
 
@@ -67,11 +47,11 @@ public class NotificationSender extends BroadcastReceiver {
      *
      * @param context
      */
-    public void cancelAlarm(Context context) {
+    public void cancelAlarm(Context context, int type) {
         Intent intent = new Intent(context, NotificationSender.class);
         PendingIntent sender = PendingIntent.getBroadcast(
             context,
-            1,
+            type,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT
         );
@@ -82,22 +62,45 @@ public class NotificationSender extends BroadcastReceiver {
     /**
      * Set up a repeating alarm
      *
-     * @param context
+     * @param context Context
+     * @param type int
      */
-    public void setAlarm(Context context) {
-        this.cancelAlarm(context);
+    public void setAlarm(Context context, int type) {
+        this.cancelAlarm(context, type);
         AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationSender.class);
         intent.putExtra("onetime", Boolean.FALSE);
+        intent.putExtra("type", type);
         PendingIntent pi = PendingIntent.getBroadcast(
             context,
-            1,
+            type,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT
         );
-        // Every 3 hours
-        long interval = 1000 * 60 * 60 * 3;
 
+        long startTime;
+        switch (type) {
+            case 2:
+                startTime = this.getWeightAlarmTime();
+                break;
+            case 1:
+            default:
+                startTime = this.getActivityAlarmTime();
+        }
+
+        am.set(
+            AlarmManager.RTC_WAKEUP,
+            startTime,
+            pi
+        );
+    }
+
+    /**
+     * Get the time that we should set for an activity alarm
+     *
+     * @return long
+     */
+    protected long getActivityAlarmTime() {
         Calendar cutOff = Calendar.getInstance();
         cutOff.set(Calendar.HOUR_OF_DAY, 18);
         cutOff.set(Calendar.MINUTE, 0);
@@ -105,7 +108,8 @@ public class NotificationSender extends BroadcastReceiver {
         long startTime;
 
         if(Calendar.getInstance().before(cutOff)) {
-            startTime = System.currentTimeMillis() + interval;
+            // Every 3 hours
+            startTime = System.currentTimeMillis() + (1000 * 60 * 60 * 3);
         } else {
             Calendar startDate = Calendar.getInstance();
             startDate.set(Calendar.HOUR_OF_DAY, 8);
@@ -114,22 +118,109 @@ public class NotificationSender extends BroadcastReceiver {
             startTime = startDate.getTimeInMillis();
         }
 
-        // 30 seconds for debugging
-        //startTime = System.currentTimeMillis() + (1000 * 30);
+        // For debugging
+        //startTime = System.currentTimeMillis() + (1000 * 80);
 
-        am.set(
-            AlarmManager.RTC_WAKEUP,
-            startTime,
-            pi
+        return startTime;
+    }
+
+    /**
+     * Get the time that we should set for a weight alarm
+     *
+     * @return long
+     */
+    protected long getWeightAlarmTime() {
+        Calendar startDate = Calendar.getInstance();
+        startDate.set(Calendar.HOUR_OF_DAY, 7);
+        startDate.set(Calendar.MINUTE, 30);
+
+        if(Calendar.getInstance().after(startDate)) {
+            startDate.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        // For debugging
+        //return System.currentTimeMillis() + (1000 * 30);
+
+        return startDate.getTimeInMillis();
+    }
+
+    /**
+     * Builds the notification that we should be displaying for a provided type
+     *
+     * @param type int
+     * @return Notification
+     */
+    protected Notification getNotification(Context context, int type) {
+        switch (type) {
+            case 2:
+                return this.getWeightNotification(context, type);
+            case 1:
+            default:
+                return this.getActivityNotification(context, type);
+        }
+    }
+
+    /**
+     * Get a notification specific to adding activities
+     *
+     * @param context Context
+     * @return Notification
+     */
+    protected Notification getActivityNotification(Context context, int type) {
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                type,
+                new Intent(context, MainActivity.class),
+                0
         );
 
-        /*
-        am.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            startTime,
-            interval,
-            pi
+        PendingIntent addActivityIntent = PendingIntent.getActivity(
+                context, 0, new Intent(context, AddActivity.class), 0
         );
-        */
+
+        long[] vibrate = {500,1000};
+        NotificationCompat.Builder n = new NotificationCompat.Builder(context)
+                .setContentTitle("Friendly Reminder")
+                .setContentText("Don't forget to log your activities!")
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentIntent(pendingIntent)
+                .setVibrate(vibrate)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .addAction(android.R.drawable.ic_dialog_alert, "Add Activity", addActivityIntent)
+                .setAutoCancel(true)
+                ;
+        return n.build();
+    }
+
+    /**
+     * Get the notification for weights
+     *
+     * @param context Context
+     * @return Notification
+     */
+    protected Notification getWeightNotification(Context context, int type) {
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                type,
+                new Intent(context, MainActivity.class),
+                0
+        );
+
+        PendingIntent addActivityIntent = PendingIntent.getActivity(
+                context, 0, new Intent(context, AddWeight.class), 0
+        );
+
+        long[] vibrate = {1500,1000};
+        NotificationCompat.Builder n = new NotificationCompat.Builder(context)
+                .setContentTitle("Friendly Reminder")
+                .setContentText("Don't forget to log your weight!")
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentIntent(pendingIntent)
+                .setVibrate(vibrate)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .addAction(android.R.drawable.ic_dialog_alert, "Add Weight", addActivityIntent)
+                .setAutoCancel(true)
+                ;
+        return n.build();
     }
 }

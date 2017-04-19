@@ -36,7 +36,7 @@ public class NotificationSender extends BroadcastReceiver {
         NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.from(context);
         int type = intent.getExtras().getInt("type");
-        notificationManager.notify(1, this.getNotification(context, type));
+        notificationManager.notify(type, this.getNotification(context, type));
 
         this.setAlarm(context, type);
         wl.release();

@@ -21,6 +21,9 @@ public class NotificationSender extends BroadcastReceiver {
     public static final int ACTIVITY = 1;
     public static final int WEIGHTS = 2;
 
+    public static final int STATE_CODE_NORMAL = 1;
+    public static final int STATE_CODE_WEIGHT_SAVED = 2;
+
     /**
      * Called when receiving an intent broadcast
      *
@@ -38,7 +41,7 @@ public class NotificationSender extends BroadcastReceiver {
         int type = intent.getExtras().getInt("type");
         notificationManager.notify(type, this.getNotification(context, type));
 
-        this.setAlarm(context, type);
+        this.setAlarm(context, type, this.STATE_CODE_NORMAL);
         wl.release();
     }
 
@@ -64,8 +67,9 @@ public class NotificationSender extends BroadcastReceiver {
      *
      * @param context Context
      * @param type int
+     * @param stateCode int
      */
-    public void setAlarm(Context context, int type) {
+    public void setAlarm(Context context, int type, int stateCode) {
         this.cancelAlarm(context, type);
         AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationSender.class);
@@ -81,7 +85,7 @@ public class NotificationSender extends BroadcastReceiver {
         long startTime;
         switch (type) {
             case 2:
-                startTime = this.getWeightAlarmTime();
+                startTime = this.getWeightAlarmTime(stateCode);
                 break;
             case 1:
             default:
@@ -127,14 +131,18 @@ public class NotificationSender extends BroadcastReceiver {
     /**
      * Get the time that we should set for a weight alarm
      *
+     * @param stateCode int
      * @return long
      */
-    protected long getWeightAlarmTime() {
+    protected long getWeightAlarmTime(int stateCode) {
         Calendar startDate = Calendar.getInstance();
         startDate.set(Calendar.HOUR_OF_DAY, 7);
         startDate.set(Calendar.MINUTE, 30);
 
-        if(Calendar.getInstance().after(startDate)) {
+        if(
+            Calendar.getInstance().after(startDate) ||
+            stateCode == this.STATE_CODE_WEIGHT_SAVED
+        ) {
             startDate.add(Calendar.DAY_OF_MONTH, 1);
         }
 

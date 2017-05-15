@@ -1,3 +1,5 @@
+Only resetting notification for adding activities if an activity is actually saved
+    Not if just opening the app
 Error validation on both fields
     Error messages
 Reminders

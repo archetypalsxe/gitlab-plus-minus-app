@@ -26,12 +26,12 @@ public class MainActivity extends AppCompatActivity {
         this.alarm.setAlarm(
                 context,
                 NotificationSender.ACTIVITY,
-                NotificationSender.STATE_CODE_NORMAL
+                NotificationSender.STATE_CODE_APP_OPENED
         );
         this.alarm.setAlarm(
                 context,
                 NotificationSender.WEIGHTS,
-                NotificationSender.STATE_CODE_NORMAL
+                NotificationSender.STATE_CODE_APP_OPENED
         );
 
         super.onCreate(savedInstanceState);

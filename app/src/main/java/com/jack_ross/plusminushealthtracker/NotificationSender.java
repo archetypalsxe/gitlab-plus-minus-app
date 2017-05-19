@@ -23,6 +23,7 @@ public class NotificationSender extends BroadcastReceiver {
 
     public static final int STATE_CODE_NORMAL = 1;
     public static final int STATE_CODE_WEIGHT_SAVED = 2;
+    public static final int STATE_CODE_APP_OPENED = 3;
 
     /**
      * Called when receiving an intent broadcast
@@ -50,7 +51,7 @@ public class NotificationSender extends BroadcastReceiver {
      *
      * @param context
      */
-    public void cancelAlarm(Context context, int type) {
+    public void cancelAlarm(Context context, int type, int stateCode) {
         Intent intent = new Intent(context, NotificationSender.class);
         PendingIntent sender = PendingIntent.getBroadcast(
             context,
@@ -70,7 +71,13 @@ public class NotificationSender extends BroadcastReceiver {
      * @param stateCode int
      */
     public void setAlarm(Context context, int type, int stateCode) {
-        this.cancelAlarm(context, type);
+        // If the app was opened, don't set an alarm if it's already set
+        if(stateCode == this.STATE_CODE_APP_OPENED) {
+            if(this.isAlarmSet(context, type)) {
+                return;
+            }
+        }
+        this.cancelAlarm(context, type, stateCode);
         AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationSender.class);
         intent.putExtra("onetime", Boolean.FALSE);
@@ -123,7 +130,7 @@ public class NotificationSender extends BroadcastReceiver {
         }
 
         // For debugging
-        //startTime = System.currentTimeMillis() + (1000 * 80);
+        startTime = System.currentTimeMillis() + (1000 * 80);
 
         return startTime;
     }
@@ -147,9 +154,9 @@ public class NotificationSender extends BroadcastReceiver {
         }
 
         // For debugging
-        //return System.currentTimeMillis() + (1000 * 30);
+        return System.currentTimeMillis() + (1000 * 30);
 
-        return startDate.getTimeInMillis();
+        //return startDate.getTimeInMillis();
     }
 
     /**
@@ -230,5 +237,16 @@ public class NotificationSender extends BroadcastReceiver {
                 .setAutoCancel(true)
                 ;
         return n.build();
+    }
+
+    /**
+     * Checks to see if an alarm has already been set or not
+     * @param type int
+     * @return boolean
+     */
+    protected boolean isAlarmSet(Context context, int type) {
+        Intent intent = new Intent(context, NotificationSender.class);
+        return (PendingIntent.getBroadcast(context, type, intent, PendingIntent.FLAG_NO_CREATE)
+                != null);
     }
 }

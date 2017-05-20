@@ -1,9 +1,3 @@
-Only resetting notification for adding activities if an activity is actually saved
-    Not if just opening the app
-    Remove state code from cancelling alarm
-    Test to see if working
-    Remove debugging code
-
 Modify database to allow for status codes of whether or not activity/weight has been sent to the server
 
 Error validation on both fields

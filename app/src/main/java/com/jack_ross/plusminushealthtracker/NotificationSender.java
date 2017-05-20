@@ -51,7 +51,7 @@ public class NotificationSender extends BroadcastReceiver {
      *
      * @param context
      */
-    public void cancelAlarm(Context context, int type, int stateCode) {
+    public void cancelAlarm(Context context, int type) {
         Intent intent = new Intent(context, NotificationSender.class);
         PendingIntent sender = PendingIntent.getBroadcast(
             context,
@@ -77,7 +77,7 @@ public class NotificationSender extends BroadcastReceiver {
                 return;
             }
         }
-        this.cancelAlarm(context, type, stateCode);
+        this.cancelAlarm(context, type);
         AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationSender.class);
         intent.putExtra("onetime", Boolean.FALSE);
@@ -130,7 +130,7 @@ public class NotificationSender extends BroadcastReceiver {
         }
 
         // For debugging
-        startTime = System.currentTimeMillis() + (1000 * 80);
+        //startTime = System.currentTimeMillis() + (1000 * 80);
 
         return startTime;
     }
@@ -154,9 +154,9 @@ public class NotificationSender extends BroadcastReceiver {
         }
 
         // For debugging
-        return System.currentTimeMillis() + (1000 * 30);
+        //return System.currentTimeMillis() + (1000 * 30);
 
-        //return startDate.getTimeInMillis();
+        return startDate.getTimeInMillis();
     }
 
     /**
